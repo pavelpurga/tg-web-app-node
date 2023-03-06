@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 const cors = require('cors');
-const {query} = require("express");
+
 
 const token ='5950608806:AAEymJGjGNtpXrIg6_xDcI892ZmqUCziGt0'
 const webAppUrl ='https://melodic-shortbread-703bcc.netlify.app'
@@ -54,14 +54,15 @@ bot.on('message', async (msg) => {
 });
 
 app.post('/web-data', async (req,res)=>{
-   const {queryId,products,totalPrice} =req.body;
+   const {queryId,products =[],totalPrice} =req.body;
 
   try{
       await bot.answerWebAppQuery(queryId,{
           type:'article',
           id:queryId,
           title:'Успешная покупка!',
-          input_message_content:{message_text: 'Поздравляю с покупкой, вы приобрели товар на сумму' + totalPrice}
+          input_message_content:{message_text: `Поздравляю с покупкой, вы приобрели товар на сумму${totalPrice},${products.map(item=>item.title).join(', ')}`
+          }
       })
       return res.status(200).json({});
   } catch (e){
